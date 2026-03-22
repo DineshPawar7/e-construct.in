@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Partner1 from '../assets/part1.jpg'
 import Partner2 from '../assets/part2.jpg'
 import Partner3 from '../assets/part3.jpg'
@@ -9,7 +10,9 @@ import Partner7 from '../assets/part7.avif'
 
 
 const TrustedPartners = () => {
-  // Sample Logos (Inki jagah aap apne asli partners ke logos ka path daal sakte hain)
+
+    const containerRef = useRef(null);
+
   const partners = [
     { id: 1, name: 'L&T', url: Partner1 },
     { id: 2, name: 'Tata Projects', url: Partner2 },
@@ -17,20 +20,38 @@ const TrustedPartners = () => {
     { id: 4, name: 'Reliance', url: Partner4 },
     { id: 5, name: 'Ambuja', url: Partner5 },
     { id: 6, name: 'Shapoorji', url: Partner6 },
-        { id: 7, name: 'Shapoorji', url: Partner7 },
-
+    { id: 7, name: 'Shapoorji', url: Partner7 },
   ];
 
-  // Marquee ko lamba karne ke liye array ko double kar rahe hain taaki gap na aaye
-  const duplicatedPartners = [...partners, ...partners];
+  const duplicatedPartners = [...partners, ...partners, ...partners]; // 3x for smoother loop
+
+  // --- PARALLAX LOGIC ---
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"] // Jab section screen me aaye tab shuru ho
+  });
+
+  // Marquee row thoda extra slide hogi scroll ke saath (Horizontal Parallax)
+  const xMove = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  
+  // Heading thoda niche se upar move hogi (Vertical Parallax)
+  const yText = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
+
+
+
 
   return (
-    <section className="bg-white py-16 border-b border-gray-100 overflow-hidden">
+    <section 
+      ref={containerRef}
+       className="bg-white py-16 border-b border-gray-100 overflow-hidden">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           
           {/* Left Side: Heading Area */}
-          <div className="w-full lg:w-[30%] flex flex-col items-start">
+           <motion.div 
+            style={{ y: yText }}
+             className="w-full lg:w-[30%] flex flex-col items-start">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight">
               We Already <br className='md:hidden flex'/>
               <span className="text-yellow-500">Worked With</span>
@@ -40,10 +61,11 @@ const TrustedPartners = () => {
             <p className="mt-4 text-gray-500 text-sm font-medium">
               Trusted by industry leaders for quality and excellence.
             </p>
-          </div>
+          </motion.div>
 
           {/* Right Side: Flowing Brand Logos */}
-          <div className="w-full lg:w-[70%] relative">
+          <motion.div 
+              style={{ x: xMove }} className="w-full lg:w-[70%] relative">
             {/* Fade Effect on sides (Left and Right) */}
             <div className="absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
             <div className="absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
@@ -62,7 +84,7 @@ const TrustedPartners = () => {
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </div>
@@ -71,14 +93,15 @@ const TrustedPartners = () => {
       <style jsx>{`
         @keyframes marquee {
           0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          100% { transform: translateX(-33.33%); } 
         }
         .animate-marquee {
           display: flex;
           width: max-content;
-          animation: marquee 25s linear infinite;
+          animation: marquee 35s linear infinite;
         }
-        .group:hover .animate-marquee {
+        /* Marquee speed slow on hover for readability */
+        .w-full:hover .animate-marquee {
           animation-play-state: paused;
         }
       `}</style>
