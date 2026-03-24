@@ -1,74 +1,126 @@
 import React from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import HeroBG from '../assets/herobg.png';
+import HeroBGMobile from '../assets/heroBGMobile.png';
 
 const Hero = () => {
   const { scrollY } = useScroll();
 
-  // Stiffness badha di hai taaki "lag" ya "glitch" na ho (Industry Standard)
-  const springConfig = { stiffness: 150, damping: 30, restDelta: 0.001 };
+  // Smooth Spring for Parallax
+  const springConfig = { stiffness: 100, damping: 30, restDelta: 0.001 };
   const smoothScrollY = useSpring(scrollY, springConfig);
 
-  // Parallax: Values ko negative kiya hai taaki natural movement mile
-  // Jab scroll niche ho, image aur text thoda upar move honge
-  const backgroundY = useTransform(smoothScrollY, [0, 1000], [0, -70]);
-  const textY = useTransform(smoothScrollY, [0, 1000], [0, -40]);
+  // Parallax Values
+  const backgroundY = useTransform(smoothScrollY, [0, 1000], [0, 150]); 
+  const textY = useTransform(smoothScrollY, [0, 1000], [0, -100]); 
+  const opacity = useTransform(smoothScrollY, [0, 500], [1, 0]);
+
+  // Entrance Animation Variants
+  const fadeInUp = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, ease: [0.6, 0.05, 0.01, 0.9] }
+  };
+
+  const stagger = {
+    animate: { transition: { staggerChildren: 0.1 } }
+  };
 
   return (
-    <section className="relative w-full h-[685px] overflow-hidden bg-black">
+    <section className="relative w-full min-h-[100dvh] lg:h-[685px] overflow-hidden bg-[#0a0a0a]">
       
       {/* --- BACKGROUND LAYER --- */}
       <motion.div 
         style={{ y: backgroundY }}
-        className="absolute inset-0 w-full h-full scale-110" // scale-110 extra room deta hai parallax ke liye
+        className="absolute inset-0 w-full h-full scale-125"
       >
         <img
           src={HeroBG}
-          alt="Construction Site"
-          className="w-full h-full object-cover object-center"
+          alt="Construction"
+          className="w-full hidden md:flex h-full object-cover object-center brightness-[0.7]"
         />
-
-        {/* Professional Overlays */}
+        <img
+          src={HeroBGMobile}
+          alt="Construction Mobile"
+          className="w-full h-full object-cover flex md:hidden object-center brightness-[0.6]"
+        />
+        
+        {/* Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent hidden md:block"></div>
+        <div className="absolute inset-0 bg-black/20 md:hidden"></div>
       </motion.div>
 
       {/* --- CONTENT LAYER --- */}
-      <motion.div 
-        style={{ y: textY }}
-        className="relative z-10 h-full w-full px-6 sm:px-10 flex items-end pb-20"
-      >
-        <div className="max-w-4xl">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-none uppercase tracking-tighter drop-shadow-2xl">
+      {/* max-w-[1400px] applied, mx-auto removed as requested */}
+      <div className="relative z-10 h-[100dvh] lg:h-full w-full lg:max-w-[1400px] px-5 sm:px-10 flex flex-col justify-end pb-20 md:pb-16 lg:pb-24">
+        
+        <motion.div 
+          variants={stagger}
+          initial="initial"
+          animate="animate"
+          style={{ y: textY, opacity }}
+          className="w-full lg:max-w-4xl"
+        >
+          {/* Tagline */}
+          <motion.div variants={fadeInUp} className="flex items-center gap-3 mb-4">
+            <span className="w-10 h-[2px] bg-yellow-500"></span>
+            <span className="text-yellow-500 uppercase tracking-[0.3em] text-[10px] md:text-sm font-bold">
+              Infrastructure & Engineering
+            </span>
+          </motion.div>
+
+          {/* Main Heading */}
+          <motion.h1 
+            variants={fadeInUp}
+            className="text-[40px] leading-[1.1] sm:text-6xl md:text-7xl lg:text-8xl font-black text-white uppercase tracking-tighter"
+          >
             We Build Your <br />
-            <span className="text-yellow-500">Dreams</span>
-          </h1>
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-yellow-400 to-yellow-600">
+              Dreams
+            </span>
+          </motion.h1>
 
-          <p className="mt-6 max-w-xl text-lg md:text-xl text-gray-200 font-medium leading-relaxed drop-shadow-md">
-            We deliver reliable civil engineering and construction solutions 
-            with a strong focus on quality, safety, and timely completion.
-          </p>
+          {/* Description */}
+          <motion.p 
+            variants={fadeInUp}
+            className="mt-4 md:mt-6 max-w-lg text-sm md:text-lg lg:text-xl text-gray-300 font-normal leading-relaxed"
+          >
+            Delivering reliable civil engineering solutions with precision, 
+            safety, and unmatched quality since 1998.
+          </motion.p>
 
-          <div className="mt-10 flex flex-wrap gap-4">
-            <button className="px-10 py-4 bg-yellow-500 hover:bg-yellow-600 text-black font-extrabold rounded-sm transition-all shadow-[0_10px_20px_rgba(234,179,8,0.3)] uppercase tracking-wider active:scale-95">
-              Free Inquiry
+          {/* Buttons */}
+          <motion.div 
+            variants={fadeInUp}
+            className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-4"
+          >
+            <button className="group relative px-8 py-4 bg-yellow-500 overflow-hidden transition-all active:scale-95">
+              <span className="relative z-10 text-black font-black uppercase tracking-wider text-sm">
+                Get Free Inquiry
+              </span>
+              <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </button>
-            <button className="px-10 py-4 border-2 border-white/80 text-white font-extrabold rounded-sm hover:bg-white hover:text-black transition-all backdrop-blur-sm uppercase tracking-wider active:scale-95">
-              Our Projects
+            
+            <button className="px-8 py-4 border border-white/30 text-white font-bold uppercase tracking-wider text-sm backdrop-blur-md hover:bg-white hover:text-black transition-all active:scale-95">
+              Explore Projects
             </button>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* --- SIDE ACCENT (Industry Style) --- */}
-      <div className="absolute right-10 bottom-28 hidden lg:block overflow-hidden pointer-events-none">
-        <span className="text-white/10 text-9xl font-black uppercase rotate-90 origin-bottom-right inline-block translate-x-10">
-          ESTD 1998
-        </span>
+          </motion.div>
+        </motion.div>
       </div>
 
-      {/* Bottom Progress Bar */}
-      <div className="absolute bottom-0 left-0 w-full h-2 bg-yellow-500 z-20 shadow-[0_-5px_15px_rgba(234,179,8,0.4)]"></div>
+      {/* Bottom Progress Line */}
+      <motion.div 
+        initial={{ width: 0 }}
+        animate={{ width: "100%" }}
+        transition={{ duration: 1.5, delay: 0.5 }}
+        className="absolute bottom-0 left-0 h-1.5 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 z-20"
+      ></motion.div>
+
+      {/* Subtle Scroll Indicator for Mobile */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:hidden">
+        <div className="w-[1px] h-8 bg-gradient-to-b from-yellow-500 to-transparent"></div>
+      </div>
     </section>
   );
 };

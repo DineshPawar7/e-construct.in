@@ -48,7 +48,7 @@ const Services = () => {
   };
 
   return (
-    <section ref={sectionRef} className="mt-20 bg-white overflow-hidden">
+    <section ref={sectionRef} className="mt20 bg-white overflow-hidden">
       <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Area with Parallax */}

@@ -70,7 +70,7 @@ const Projects = () => {
   return (
     <section 
       ref={sectionRef} 
-      className="py-24 bg-[#fcfcfc] px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className=" px-2 sm:px-2 py-10 md:py-20 lg:px-4 overflow-hidden"
     >
       <div className="max-w-[1400px] mx-auto">
         
@@ -101,21 +101,25 @@ const Projects = () => {
           </div>
 
           {/* Filter Buttons */}
-          <div className="flex flex-wrap gap-2 bg-slate-100 p-2 rounded-2xl border border-slate-200 shadow-inner">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveFilter(cat)}
-                className={`px-6 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all duration-500 ${
-                  activeFilter === cat 
-                  ? "bg-slate-900 text-white shadow-xl scale-105" 
-                  : "text-slate-500 hover:text-slate-900 hover:bg-white"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+       <div className="flex flex-wrap gap-2 bg-slate-100 p-2 rounded-2xl border border-slate-200 shadow-inner justify-center">
+  {categories.map((cat) => (
+    <button
+      key={cat}
+      onClick={() => setActiveFilter(cat)}
+      className={`
+        px-4 py-2 sm:px-6 sm:py-3
+        rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest
+        transition-all duration-300
+        ${activeFilter === cat 
+          ? "bg-slate-900 text-white shadow-xl scale-105"
+          : "text-slate-500 hover:text-slate-900 hover:bg-white"
+        }
+      `}
+    >
+      {cat}
+    </button>
+  ))}
+</div>
         </div>
 
         {/* Projects Grid with Parallax */}
